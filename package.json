@@ -1,0 +1,7 @@
+{
+  "name": "3gpp-asn1-parser",
+  "main": "parser.js",
+  "dependencies": {
+    "jison": "^0.4.18"
+  }
+}
