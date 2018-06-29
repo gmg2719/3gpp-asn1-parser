@@ -93,6 +93,11 @@ definition
         {
             var obj = {};
             obj[$1] = Object.assign($4, {parameterisedType: true, parameters: $2});
+            for (let item of obj[$1]['content']) {
+                if (obj[$1]['parameters'].includes(item['type'])) {
+                    item['isParameter'] = true;
+                }
+            }
             for (let item of $2) {
                 var index = obj[$1]['inventory'].indexOf(item);
                 if (index == -1) {
