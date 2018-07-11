@@ -1,8 +1,9 @@
 var fs = require('fs');
-var jison = require('jison');
+// var jison = require('jison');
 var path = require('path');
-var bnf = fs.readFileSync(path.resolve(__dirname, 'asn1.jison'), 'utf8');
-var parser = new jison.Parser(bnf);
+// var bnf = fs.readFileSync(path.resolve(__dirname, 'asn1.jison'), 'utf8');
+// var parser = new jison.Parser(bnf);
+var parser = require('./asn1').parser;
 
 module.exports = exports = {
     parse: parse,
