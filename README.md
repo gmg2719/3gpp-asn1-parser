@@ -2,7 +2,20 @@
 
 It parses ASN.1 from a text file and generate a JSON structure
 
+## Installation
+
+```sh
+npm i third-gen-asn1-parser
+```
+
 ## Usage
+
+### Package
+
+```js
+var parse = require('third-gen-asn1-parser');
+var asn1Json = parse(<asn1Text>);
+```
 
 ### Command Line
 
@@ -10,11 +23,3 @@ It parses ASN.1 from a text file and generate a JSON structure
 node parser <file_name>
 # ex: node parser 36331-f10.asn1
 ```
-
-### Package
-
-```js
-var parse = require('./3gpp-asn1-parser');
-var asn1Json = parse(<asn1Text>);
-```
-
