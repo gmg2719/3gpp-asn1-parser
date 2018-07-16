@@ -1,6 +1,10 @@
 {
   "name": "third-gen-asn1-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gsongsong/3gpp-asn1-parser"
+  },
   "main": "parser.js"
 }
