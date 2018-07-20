@@ -1,6 +1,6 @@
 # 3GPP ASN.1 Parser
 
-It parses ASN.1 from a text file and generate a JSON structure
+It parses 3GPP RRC (36.331, 38.331) ASN.1 text into a JSON structure
 
 ## Installation
 
@@ -14,7 +14,7 @@ npm i third-gen-asn1-parser
 
 ```js
 var parse = require('third-gen-asn1-parser');
-var asn1Json = parse(<asn1Text>);
+var asn1Json = parse(asn1Text));
 ```
 
 ### Command Line
