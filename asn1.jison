@@ -357,7 +357,37 @@ nameTypeList
 nameTypeMembers
     : nameTypeMembers ',' nameTypeMember
         {$$ = Array.prototype.concat($1, $3);}
+    | nameTypeMembers ',' '[[' nameTypeExtensionAdditionGroupMembers ']]'
+        {
+            var inventory = $4.reduce(function(accum, curr, currIndex, array) {
+                if ('inventory' in curr) {
+                    for (let item of curr['inventory']) {
+                        if (!accum.includes(item)) {
+                            accum = accum.concat(item);
+                        }
+                    }
+                    delete curr['inventory'];
+                }
+                return accum;
+            }, []);
+            var obj = {};
+            Object.assign(obj, {extensionAdditionGroup: $4}, {inventory: inventory});
+            $$ = Array.prototype.concat($1, obj);
+        }
     | nameTypeMembers ',' 'COND' 'IDENTIFIER' nameTypeMember
+        {Object.assign($1[$1.length - 1], {condition: $4});
+         $$ = Array.prototype.concat($1, $5);}
+    | nameTypeMember
+        {$$ = Array.prototype.concat([], $1);}
+    ;
+
+nameTypeExtensionAdditionGroupMembers
+    : nameTypeExtensionAdditionGroupMembers ',' nameTypeMember
+        {$$ = Array.prototype.concat($1, $3);}
+    | nameTypeExtensionAdditionGroupMembers ',' 'NEED_CODE' nameTypeMember
+        {Object.assign($1[$1.length - 1], {needCode: $3});
+         $$ = Array.prototype.concat($1, $4);}
+    | nameTypeExtensionAdditionGroupMembers ',' 'COND' 'IDENTIFIER' nameTypeMember
         {Object.assign($1[$1.length - 1], {condition: $4});
          $$ = Array.prototype.concat($1, $5);}
     | nameTypeMember
