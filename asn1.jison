@@ -1,11 +1,15 @@
 %lex
 %s TRAILING
+%s COND
 %%
 
 \n                              this.begin('INITIAL');
+// After trailing comment '-- Cond', consider the remaining part as IDENTIFIER
+// See 38331-f30 :: RACH-ConfigCommon :: msg1-SubcarrierSpacing
+<COND>.+                       return 'IDENTIFIER'
 \s                              /* skip whitespace */
 <TRAILING>'-- Need '\w+         return 'NEED_CODE'
-<TRAILING>'-- Cond'             return 'COND'
+<TRAILING>'-- Cond'             this.begin('COND'); return 'COND'
 '--'.*                          /* skip comment */
 'ABSENT'                        return 'ABSENT'
 'AUTOMATIC'                     return 'AUTOMATIC'
@@ -374,9 +378,9 @@ nameTypeMembers
             Object.assign(obj, {extensionAdditionGroup: $4}, {inventory: inventory});
             $$ = Array.prototype.concat($1, obj);
         }
-    | nameTypeMembers ',' 'COND' 'IDENTIFIER' nameTypeMember
-        {Object.assign($1[$1.length - 1], {condition: $4});
-         $$ = Array.prototype.concat($1, $5);}
+    | nameTypeMembers ',' condExpression nameTypeMember
+        {Object.assign($1[$1.length - 1], $3);
+         $$ = Array.prototype.concat($1, $4);}
     | nameTypeMember
         {$$ = Array.prototype.concat([], $1);}
     ;
@@ -387,9 +391,9 @@ nameTypeExtensionAdditionGroupMembers
     | nameTypeExtensionAdditionGroupMembers ',' 'NEED_CODE' nameTypeMember
         {Object.assign($1[$1.length - 1], {needCode: $3});
          $$ = Array.prototype.concat($1, $4);}
-    | nameTypeExtensionAdditionGroupMembers ',' 'COND' 'IDENTIFIER' nameTypeMember
-        {Object.assign($1[$1.length - 1], {condition: $4});
-         $$ = Array.prototype.concat($1, $5);}
+    | nameTypeExtensionAdditionGroupMembers ',' condExpression nameTypeMember
+        {Object.assign($1[$1.length - 1], $3);
+         $$ = Array.prototype.concat($1, $4);}
     | nameTypeMember
         {$$ = Array.prototype.concat([], $1);}
     ;
@@ -397,8 +401,8 @@ nameTypeExtensionAdditionGroupMembers
 nameTypeMember
     : 'IDENTIFIER' type
         {$$ = Object.assign({name: $1}, $2);}
-    | 'IDENTIFIER' type 'COND' 'IDENTIFIER'
-        {$$ = Object.assign({name: $1, condition: $4}, $2);}
+    | 'IDENTIFIER' type condExpression
+        {$$ = Object.assign({name: $1}, $2, $3);}
     | '...'
         {$$ = {name: $1};}
     |
@@ -454,9 +458,9 @@ nameTypeOptionalMembers
     | nameTypeOptionalMembers ',' 'NEED_CODE' nameTypeOptionalMember
         {Object.assign($1[$1.length - 1], {needCode: $3});
          $$ = Array.prototype.concat($1, $4);}
-    | nameTypeOptionalMembers ',' 'COND' 'IDENTIFIER' nameTypeOptionalMember
-        {Object.assign($1[$1.length - 1], {condition: $4});
-         $$ = Array.prototype.concat($1, $5);}
+    | nameTypeOptionalMembers ',' condExpression nameTypeOptionalMember
+        {Object.assign($1[$1.length - 1], $3);
+         $$ = Array.prototype.concat($1, $4);}
     | nameTypeOptionalMember
         {$$ = Array.prototype.concat([], $1);}
     ;
@@ -467,9 +471,9 @@ nameTypeOptionalExtensionAdditionGroupMembers
     | nameTypeOptionalExtensionAdditionGroupMembers ',' 'NEED_CODE' nameTypeOptionalMember
         {Object.assign($1[$1.length - 1], {needCode: $3});
          $$ = Array.prototype.concat($1, $4);}
-    | nameTypeOptionalExtensionAdditionGroupMembers ',' 'COND' 'IDENTIFIER' nameTypeOptionalMember
-        {Object.assign($1[$1.length - 1], {condition: $4});
-         $$ = Array.prototype.concat($1, $5);}
+    | nameTypeOptionalExtensionAdditionGroupMembers ',' condExpression nameTypeOptionalMember
+        {Object.assign($1[$1.length - 1], $3);
+         $$ = Array.prototype.concat($1, $4);}
     | nameTypeOptionalMember
         {$$ = Array.prototype.concat([], $1);}
     ;
@@ -481,8 +485,8 @@ nameTypeOptionalMember
         {$$ = Object.assign({name: $1,optional: true}, $2);}
     | 'IDENTIFIER' type 'OPTIONAL' 'NEED_CODE'
         {$$ = Object.assign({name: $1, optional: true, needCode: $4}, $2);}
-    | 'IDENTIFIER' type 'OPTIONAL' 'COND' 'IDENTIFIER'
-        {$$ = Object.assign({name: $1, optional: true, condition: $5}, $2);}
+    | 'IDENTIFIER' type 'OPTIONAL' condExpression
+        {$$ = Object.assign({name: $1, optional: true}, $2, $4);}
     | 'IDENTIFIER' type 'DEFAULT' 'IDENTIFIER'
         {$$ = Object.assign({name: $1, default: $4}, $2);}
     | 'IDENTIFIER' type 'DEFAULT' 'BIT_STRING_EXPRESSION'
@@ -521,4 +525,9 @@ namePresentAbsentMember
         {$$ = {name: $1};}
     |
         {$$ = [];}
+    ;
+
+condExpression
+    : 'COND' 'IDENTIFIER'
+        {$$ = {condition: ($2).trim()};}
     ;
