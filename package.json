@@ -6,5 +6,9 @@
     "type": "git",
     "url": "https://github.com/gsongsong/3gpp-asn1-parser"
   },
-  "main": "parser.js"
+  "main": "TODO",
+  "scripts": {
+    "build": "tsc",
+    "test": "node dist/test.js"
+  }
 }
