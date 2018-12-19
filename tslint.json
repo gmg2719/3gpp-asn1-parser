@@ -9,7 +9,8 @@
         "no-console": false,
         "no-string-literal": false,
         "ordered-imports": false,
-        "quotemark": [true, "single"]
+        "quotemark": [true, "single"],
+        "typedef":  [true, "call-signature"]
     },
     "rulesDirectory": []
 }
